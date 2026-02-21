@@ -1,36 +1,31 @@
 from django.contrib import admin
-from .models import Course, Lesson, Question, Choice, Submission
-from django.contrib.auth.models import User
+from .models import Instructor, Learner, Course, Lesson, Question, Choice, Submission
 
-# Inline for Choices (shown inside Question)
-class ChoiceInline(admin.TabularInline):
-    model = Choice
-    extra = 2  # number of empty choices to show
-    min_num = 1
-    max_num = 10
-
-# Inline for Questions (shown inside Lesson)
+# Inline for Question in Lesson
 class QuestionInline(admin.TabularInline):
     model = Question
     extra = 1
-    min_num = 1
-    max_num = 10
 
-# Admin for Questions (editable Choices inside)
-class QuestionAdmin(admin.ModelAdmin):
-    list_display = ('text', 'lesson', 'grade')
-    inlines = [ChoiceInline]
+# Inline for Choice in Question
+class ChoiceInline(admin.TabularInline):
+    model = Choice
+    extra = 2
 
-# Admin for Lessons (editable Questions inside)
+# Admin for Lesson
 class LessonAdmin(admin.ModelAdmin):
-    list_display = ('title', 'course', 'order')
     inlines = [QuestionInline]
 
-# Admin for Courses
-class CourseAdmin(admin.ModelAdmin):
-    list_display = ('title', 'description', 'created_at')
+# Admin for Question
+class QuestionAdmin(admin.ModelAdmin):
+    inlines = [ChoiceInline]
 
-# Register models with admin
+# Admin for Course
+class CourseAdmin(admin.ModelAdmin):
+    inlines = [LessonAdmin]
+
+# Register all seven models
+admin.site.register(Instructor)
+admin.site.register(Learner)
 admin.site.register(Course, CourseAdmin)
 admin.site.register(Lesson, LessonAdmin)
 admin.site.register(Question, QuestionAdmin)
